@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.hoodbudget_.data.BudgetRepository
 import com.example.hoodbudget_.data.Category
+import com.example.hoodbudget_.data.Expense
 import com.example.hoodbudget_.data.User
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -14,6 +15,9 @@ import kotlinx.coroutines.launch
 class BudgetViewModel(private val repository: BudgetRepository) : ViewModel() {
 
     val allCategories: StateFlow<List<Category>> = repository.allCategories
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val allExpenses: StateFlow<List<Expense>> = repository.allExpenses
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     suspend fun login(username: String, password: String): Boolean {
@@ -38,6 +42,34 @@ class BudgetViewModel(private val repository: BudgetRepository) : ViewModel() {
     fun deleteCategory(category: Category) {
         viewModelScope.launch {
             repository.deleteCategory(category)
+        }
+    }
+
+    fun addExpense(
+        date: String,
+        startTime: String,
+        endTime: String,
+        description: String,
+        categoryName: String,
+        photoUri: String?
+    ) {
+        viewModelScope.launch {
+            repository.insertExpense(
+                Expense(
+                    date = date,
+                    startTime = startTime,
+                    endTime = endTime,
+                    description = description,
+                    categoryName = categoryName,
+                    photoUri = photoUri
+                )
+            )
+        }
+    }
+
+    fun deleteExpense(expense: Expense) {
+        viewModelScope.launch {
+            repository.deleteExpense(expense)
         }
     }
 }

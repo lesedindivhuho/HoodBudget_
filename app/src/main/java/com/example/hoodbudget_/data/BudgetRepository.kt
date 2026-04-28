@@ -13,4 +13,14 @@ class BudgetRepository(private val budgetDao: BudgetDao) {
     suspend fun insertCategory(category: Category) = budgetDao.insertCategory(category)
 
     suspend fun deleteCategory(category: Category) = budgetDao.deleteCategory(category)
+
+    // Expenses
+    val allExpenses: Flow<List<Expense>> = budgetDao.getAllExpenses()
+
+    fun getExpensesInRange(startDate: String, endDate: String): Flow<List<Expense>> = 
+        budgetDao.getExpensesInRange(startDate, endDate)
+
+    suspend fun insertExpense(expense: Expense) = budgetDao.insertExpense(expense)
+
+    suspend fun deleteExpense(expense: Expense) = budgetDao.deleteExpense(expense)
 }

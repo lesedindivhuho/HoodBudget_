@@ -21,4 +21,17 @@ interface BudgetDao {
 
     @Delete
     suspend fun deleteCategory(category: Category)
+
+    // Expense
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertExpense(expense: Expense)
+
+    @Query("SELECT * FROM expenses ORDER BY date DESC")
+    fun getAllExpenses(): Flow<List<Expense>>
+
+    @Query("SELECT * FROM expenses WHERE date BETWEEN :startDate AND :endDate ORDER BY date DESC")
+    fun getExpensesInRange(startDate: String, endDate: String): Flow<List<Expense>>
+
+    @Delete
+    suspend fun deleteExpense(expense: Expense)
 }
